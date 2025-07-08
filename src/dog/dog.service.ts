@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException, OnModuleInit} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { RandomdogService } from '../randomdog/randomdog.service';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -20,14 +20,14 @@ export class DogService {
     return this.prisma.dog.findMany();
   }
   async findOne(id: number) {
-    return this.prisma.dog.findUnique({where: {id}});
+    return this.prisma.dog.findUnique({ where: { id } });
   }
-  async likeDog(id: number){
-    const dog = await this.findOne(id)
-    if(!dog) throw new NotFoundException('Not Found');
+  async likeDog(id: number) {
+    const dog = await this.findOne(id);
+    if (!dog) throw new NotFoundException('Not Found');
     return this.prisma.dog.update({
-      where: {id},
-      data: {likes: (dog.likes + 1)},
-    })
+      where: { id },
+      data: { likes: dog.likes + 1 },
+    });
   }
 }
