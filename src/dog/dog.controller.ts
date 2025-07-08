@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Param } from '@nestjs/common';
 import { DogService } from './dog.service';
-import {ApiOperation, ApiParam} from '@nestjs/swagger';
+import { ApiOperation, ApiParam } from '@nestjs/swagger';
 
 @Controller('dog')
 export class DogController {

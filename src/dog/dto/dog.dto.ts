@@ -1,4 +1,4 @@
 export class DogDto {
-    id: number;
-    file: string;
+  id: number;
+  file: string;
 }
