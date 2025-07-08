@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 
 @Injectable()
 export class RandomdogService {
   private randomInstance: AxiosInstance;
 
-  constructor(private readonly configService: ConfigService) {
-    const baseURL = this.configService.get<string>('DOGTEST_URL');
+  constructor() {
+    const baseURL = 'https://random.dog/';
     const defaultConfig = {
       baseURL,
     };
