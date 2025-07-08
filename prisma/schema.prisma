@@ -15,6 +15,7 @@ datasource db {
 }
 
 model Dog {
-  id   Int    @id @default(autoincrement())
-  file String
+  id    Int    @id @default(autoincrement())
+  file  String
+  likes Int    @default(0)
 }

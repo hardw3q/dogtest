@@ -1,17 +1,14 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {Injectable, NotFoundException, OnModuleInit} from '@nestjs/common';
 import { RandomdogService } from '../randomdog/randomdog.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class DogService implements OnModuleInit {
+export class DogService {
   constructor(
     private randomdogService: RandomdogService,
     private prisma: PrismaService,
   ) {}
 
-  async onModuleInit() {
-    await this.reloadDogs();
-  }
   async reloadDogs() {
     const dogs: string[] = await this.randomdogService.getAllDogs();
     await this.prisma.dog.deleteMany();
@@ -21,5 +18,16 @@ export class DogService implements OnModuleInit {
   }
   async findAll() {
     return this.prisma.dog.findMany();
+  }
+  async findOne(id: number) {
+    return this.prisma.dog.findUnique({where: {id}});
+  }
+  async likeDog(id: number){
+    const dog = await this.findOne(id)
+    if(!dog) throw new NotFoundException('Not Found');
+    return this.prisma.dog.update({
+      where: {id},
+      data: {likes: (dog.likes + 1)},
+    })
   }
 }
