@@ -1,26 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDogDto } from './dto/create-dog.dto';
-import { UpdateDogDto } from './dto/update-dog.dto';
+import {Injectable, OnModuleInit} from '@nestjs/common';
+import {RandomdogService} from "../randomdog/randomdog.service";
+import {PrismaService} from "../prisma/prisma.service";
+
 
 @Injectable()
-export class DogService {
-  create(createDogDto: CreateDogDto) {
-    return 'This action adds a new dog';
+export class DogService implements OnModuleInit{
+  constructor(private randomdogService: RandomdogService, private prisma: PrismaService) {
   }
 
-  findAll() {
-    return `This action returns all dog`;
+  async onModuleInit() {
+        await this.reloadDogs()
+    }
+  async reloadDogs() {
+    const dogs: string[] = await this.randomdogService.getAllDogs()
+    await this.prisma.dog.deleteMany();
+    return this.prisma.dog.createMany({
+      data: dogs.map((file) => ({file})),
+    });
   }
-
-  findOne(id: number) {
-    return `This action returns a #${id} dog`;
-  }
-
-  update(id: number, updateDogDto: UpdateDogDto) {
-    return `This action updates a #${id} dog`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} dog`;
+  async findAll(){
+    return this.prisma.dog.findMany();
   }
 }
