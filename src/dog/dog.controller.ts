@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query } from '@nestjs/common';
 import { DogService } from './dog.service';
-import { ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @Controller('dog')
 export class DogController {
@@ -33,7 +33,27 @@ export class DogController {
     summary: 'Получить всех собак',
     description: 'Получить список собак с названиями файлов.',
   })
-  findAll() {
-    return this.dogService.findAll();
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    description: 'Номер страницы (default: 1)',
+    required: false,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    description: 'Количество объектов на странице (default: 10)',
+    required: false,
+    example: 10,
+  })
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.dogService.findAll({
+      page: Number(page),
+      limit: Number(limit),
+    });
   }
 }

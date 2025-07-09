@@ -16,8 +16,30 @@ export class DogService {
       data: dogs.map((file) => ({ file })),
     });
   }
-  async findAll() {
-    return this.prisma.dog.findMany();
+  async findAll(params: { page: number; limit: number }) {
+    const { page, limit } = params;
+    const skip = (page - 1) * limit;
+
+    const [items, totalItems] = await Promise.all([
+      this.prisma.dog.findMany({
+        skip,
+        take: limit,
+      }),
+      this.prisma.dog.count(),
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      items,
+      meta: {
+        totalItems,
+        itemCount: items.length,
+        itemsPerPage: limit,
+        totalPages,
+        currentPage: page,
+      },
+    };
   }
   async findOne(id: number) {
     return this.prisma.dog.findUnique({ where: { id } });
