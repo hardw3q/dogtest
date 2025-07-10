@@ -1,10 +1,34 @@
 import { Controller, Get, Post, Param, Query } from '@nestjs/common';
 import { DogService } from './dog.service';
-import { ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {ApiOperation, ApiParam, ApiQuery, ApiResponse} from '@nestjs/swagger';
 
 @Controller('dog')
 export class DogController {
   constructor(private readonly dogService: DogService) {}
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Получить собаку по ID',
+    description: 'Возвращает данные конкретной собаки по её идентификатору',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'Уникальный идентификатор собаки',
+    type: Number,
+    example: 42,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Успешное получение данных собаки',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Собака с указанным ID не найдена',
+  })
+  findOne(@Param('id') id: number) {
+    return this.dogService.findOne(Number(id));
+  }
 
   @Post('/:id/like')
   @ApiOperation({
